@@ -27,3 +27,9 @@ const kCountryInputDecorationStyle = InputDecoration(
     fontSize: 16,
   ),
 );
+
+const kConditionTextStyle = TextStyle(
+  fontSize: 60.0,
+);
+
+const kTempTextStyle = TextStyle(fontSize: 60.0, color: Colors.white);

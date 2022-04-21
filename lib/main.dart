@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/providers/network_provider.dart';
+import 'package:weather_app/providers/weather_provider.dart';
 import 'package:weather_app/screens/home_screen.dart';
+import 'package:weather_app/screens/get_weather_condition_screen.dart';
 import 'package:weather_app/screens/network_error_screen.dart';
 
 void main() {
@@ -17,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => NetworkInfoImpl()),
+          ChangeNotifierProvider(create: (context) => WeatherProvider()),
         ],
         child: MaterialApp(
             title: 'Weather',
@@ -54,15 +57,19 @@ class _SplashScreenState extends State<SplashScreen> {
     return Consumer<NetworkInfoImpl>(builder: (context, value, child) {
       return AnimatedSplashScreen(
           duration: 3000,
-          splash: const Image(
-              height: 1000,
-              width: 1000,
-              image: AssetImage('assets/images/weather_icon.png')),
+          splash: const Text(
+            'WEATHER',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 30.0,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           nextScreen: value.networkStatus == true
               ? const HomeScreen()
               : const NetworkErrorScreen(),
           splashTransition: SplashTransition.fadeTransition,
-          backgroundColor: Colors.blue);
+          backgroundColor: Colors.blue.shade400);
     });
   }
 }

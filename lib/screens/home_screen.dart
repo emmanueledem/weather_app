@@ -1,80 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/providers/style/constants.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/providers/network_provider.dart';
+import 'package:weather_app/style/constants.dart';
+import 'package:weather_app/screens/get_weather_condition_screen.dart';
+import 'package:weather_app/widgets/error_messages.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    Key? key,
-  }) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _handleCartItems();
-  }
-
-  Future _handleCartItems() async {}
-
+  final _formKey = GlobalKey<FormState>();
+  final _locationNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Weather'),
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage('assets/images/showers.png')),
-                    color: Color(0xffFFFFFF),
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10))),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      '0°C',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                      ),
-                    ),
-                    Text(
-                      'San Fransisco',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                      ),
-                    ),
-                  ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 21, vertical: 40),
+                child: TextFormField(
+                  controller: _locationNameController,
+                  validator: (String? value) {
+                    return (value == null || value.isEmpty)
+                        ? 'Location is required'
+                        : null;
+                  },
+                  style: const TextStyle(
+                      color: Colors.black87,
+                      fontFamily: 'poppins',
+                      height: 1.3),
+                  decoration: kCountryInputDecorationStyle.copyWith(
+                      labelText: 'Search a Location...',
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.blue,
+                      )),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 40),
-              child: TextField(
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                    fontFamily: 'poppins',
-                    height: 1.3),
-                decoration: kCountryInputDecorationStyle.copyWith(
-                    labelText: 'Search a Location...',
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: Colors.blue,
-                    )),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: MaterialButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        var networkProvider = Provider.of<NetworkInfoImpl>(
+                            context,
+                            listen: false);
+                        await networkProvider.checkNewtworkStatus();
+                        if (networkProvider.networkStatus == true) {
+                          
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => WeatherConditionScreen(
+                                    locationName: _locationNameController.text,
+                                  )));
+                          // _locationNameController.clear();
+                        } else {
+                          networkAlertMessage(context);
+                        }
+                      }
+                    },
+                    minWidth: 365,
+                    height: 51,
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    child: const Text(
+                      'Get weather',
+                      style: TextStyle(
+                          color: Color(
+                            0xffF6F6F9,
+                          ),
+                          fontSize: 17,
+                          fontFamily: 'poppins',
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
