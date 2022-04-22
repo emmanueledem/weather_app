@@ -9,8 +9,15 @@ class WeatherProvider extends ChangeNotifier {
   String? weatherStatus;
   int? id;
   String apiKey = 'fbca3848048e4cca75b36005457d9b3a';
+  bool? ifCountryExist;
+  bool saving = false;
+  void manageProgress(value) {
+    saving = value;
+    notifyListeners();
+  }
 
   Future fetchLocation(value) async {
+    manageProgress(true);
     location = value;
     try {
       http.Response response = await http.get(Uri.parse(
@@ -21,10 +28,11 @@ class WeatherProvider extends ChangeNotifier {
         var lon = data[0]['lat'];
         var lat = data[0]['lon'];
         await fetchLocationData(lon, lat);
-      } else {}
+      }
     } catch (e) {
-      Logger().d('invalid country');
+      ifCountryExist = false;
     }
+    manageProgress(false);
     notifyListeners();
   }
 
@@ -35,13 +43,10 @@ class WeatherProvider extends ChangeNotifier {
     var data = jsonDecode(response.body);
 
     id = data["weather"][0]['id'];
-    temperature = data["main"]['temp'].round();
+    double temp = data['main']['temp'];
+    temperature = temp.toInt();
     weatherStatus = data["weather"][0]['description'];
-
-    Logger().d(data);
-    Logger().d(id);
-    Logger().d(temperature);
-    Logger().d(weatherStatus);
+    ifCountryExist = true;
     notifyListeners();
   }
 
@@ -65,7 +70,7 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
-  String getMessage(int temp) {
+  String getMessage(temp) {
     if (temp > 25) {
       return 'It\'s 🍦 time';
     } else if (temp > 20) {
