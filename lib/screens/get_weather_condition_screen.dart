@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/providers/weather_provider.dart';
 import 'package:weather_app/style/constants.dart';
@@ -20,19 +19,16 @@ class _WeatherConditionScreenState extends State<WeatherConditionScreen> {
       backgroundColor: Colors.white,
       body: Consumer<WeatherProvider>(
         builder: (context, weatherProvider, child) {
-          Logger().d(weatherProvider.temperature);
           return SafeArea(
             child: Container(
               width: double.infinity,
+              height: double.infinity,
               decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image:
-                          AssetImage('assets/images/location_background.jpg')),
-                  color: Color(0xffFFFFFF),
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10))),
+                image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: AssetImage('assets/images/location_background.jpg')),
+                color: Color(0xffFFFFFF),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -57,7 +53,7 @@ class _WeatherConditionScreenState extends State<WeatherConditionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 100),
+                        padding: const EdgeInsets.only(top: 50),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -84,13 +80,14 @@ class _WeatherConditionScreenState extends State<WeatherConditionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 15.0, top: 270),
+                        padding: const EdgeInsets.only(right: 15.0, top: 240),
                         child: Text(
                           weatherProvider
                                   .getMessage(weatherProvider.temperature) +
                               ' in ',
                           style: const TextStyle(
                               fontSize: 60, color: Colors.white),
+                          textAlign: TextAlign.right,
                         ),
                       ),
                       Padding(
@@ -100,7 +97,8 @@ class _WeatherConditionScreenState extends State<WeatherConditionScreen> {
                         child: Text(
                           weatherProvider.location.toString(),
                           style: const TextStyle(
-                              fontSize: 60, color: Colors.white),
+                              fontSize: 50, color: Colors.white),
+                          textAlign: TextAlign.right,
                         ),
                       ),
                     ],

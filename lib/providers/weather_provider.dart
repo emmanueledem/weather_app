@@ -39,7 +39,9 @@ class WeatherProvider extends ChangeNotifier {
   Future fetchLocationData(lon, lat) async {
     http.Response response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=' +
-            apiKey));
+            apiKey +
+    '&units=metric'));
+    
     var data = jsonDecode(response.body);
 
     id = data["weather"][0]['id'];
